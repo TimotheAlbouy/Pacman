@@ -1,0 +1,191 @@
+model Pacman
+
+-- classes
+
+class Game
+attributes
+  lives: Integer
+  score: Integer
+  bestScore: Integer
+operations
+  initialize()
+  play()
+  isGameOver(): Boolean
+  levelFinished(): Boolean
+  passNextLevel()
+end
+
+class GumType
+attributes
+  name: String
+  points: Integer
+end
+
+class Gum
+operations
+  getPoints(): Integer = self.gumtype.points --+ self.corridor.grid.level
+end
+
+class Grid
+attributes
+  level: Integer
+operations
+  getInvincibilityTime(): Integer = (-0.5*self.level+30).round()
+end
+
+abstract class Square
+attributes
+  x: Integer
+  y: Integer
+end
+
+class Wall < Square
+end
+
+class Corridor < Square
+end
+
+abstract class Sprite
+operations
+  move()
+end
+
+class Pacman < Sprite
+attributes
+  counterInvincibility: Integer
+operations
+  move()
+  isInvincible(): Boolean
+end
+
+class Ghost < Sprite
+attributes
+  isEaten: Boolean
+end
+
+-- associations
+
+aggregation squares between
+  Grid[1] role grid
+  Square[225] role squares
+end
+
+association location between
+  Sprite[*] role sprite
+  Corridor[1] role corridor
+end
+
+association ghosts between
+  Game[1] role game
+  Ghost[4] role ghosts
+end
+
+association pacman between
+  Game[1] role game
+  Pacman[1] role pacman
+end
+
+association grid between
+  Game[1] role game
+  Grid[1] role grid
+end
+
+association gum between
+  Corridor[1] role corridor
+  Gum[0..1] role gum
+end
+
+association type between
+  GumType[1] role gumtype
+  Gum[*] role gum
+end
+
+
+
+constraints
+
+-- Game constraints
+
+context Game
+  inv: self.lives >= 0
+  inv: self.score >= 0
+  inv: self.bestScore >= self.score
+
+context Game::initialize()
+  post: self.lives = 4
+  post: self.score = 0
+  post: self.grid.oclIsNew()
+  post: self.grid.squares->forAll(s | s.oclIsNew())
+  post: self.pacman.oclIsNew()
+  post: self.ghosts->forAll(g | g.oclIsNew())
+  -- post: Corridor.allInstances().gum->forAll(g | g.oclIsNew())
+  post: GumType.allInstances()->forAll(gt | gt.oclIsNew())
+
+context Game::isGameOver(): Boolean
+  -- Returns true only if the player has no life left.
+  post: result = (self.lives = 0)
+
+context Game::levelFinished(): Boolean
+  -- Returns true only if there are no gums left on the level.
+  post: result = Corridor.allInstances()->forAll(c | c.gum->size() = 0)
+
+context Game::passNextLevel()
+  post: self.grid.oclIsNew()
+
+-- Square constraints
+
+context Square
+  -- Two different squares cannot have the same coordinates.
+  inv: Square.allInstances()->forAll(p1, p2 | p1 <> p2 implies p1.x <> p2.x or p1.y <> p2.y)
+
+-- GumType constraints
+
+context GumType
+  -- Check that all the gum types are present (simple, apple, orange, cherry, super)
+  -- with their associated points.
+  inv: GumType.allInstances()->size() = 5
+  inv: GumType.allInstances()->select(gt | gt.name = 'simple' and gt.points = 10)->size() = 1
+  inv: GumType.allInstances()->select(gt | gt.name = 'apple' and gt.points = 700)->size() = 1
+  inv: GumType.allInstances()->select(gt | gt.name = 'orange' and gt.points = 500)->size() = 1
+  inv: GumType.allInstances()->select(gt | gt.name = 'cherry' and gt.points = 100)->size() = 1
+  inv: GumType.allInstances()->select(gt | gt.name = 'super' and gt.points = 10)->size() = 1
+
+-- Sprite constraints
+
+context Sprite::move()
+  -- The sprite can move one square at a time horizontally or vertically.
+  -- It can also stay still.
+  post: (self.corridor.x = self.corridor.x@pre and
+          (self.corridor.y = self.corridor.y@pre+1 or
+          self.corridor.y = self.corridor.y@pre-1 or
+          self.corridor.y = self.corridor.y@pre))
+        or (self.corridor.y = self.corridor.y@pre and
+          (self.corridor.x = self.corridor.x@pre+1 or
+          self.corridor.x = self.corridor.x@pre-1))
+
+-- Pacman constraints
+
+context Pacman
+  inv: counterInvincibility >= 0
+
+context Pacman::move()
+  -- Add the points of the eaten gum to the score. 
+  post: if self.corridor.gum@pre->size() = 1
+        then self.game.score = self.game.score@pre + self.corridor.gum@pre.getPoints()
+		else true
+		endif
+  -- If the gum ate a supergum, the counter of invincibility is reset to 0.
+  post: if self.corridor.gum@pre->size() = 1 and self.corridor.gum@pre.gumtype.name = 'super'
+        then self.counterInvincibility = 0
+		else true
+		endif
+  -- There is no gum on a square where the pacman passed.
+  post: self.corridor.gum->size() = 0
+
+context Pacman::isInvincible(): Boolean
+  post: result = self.counterInvincibility <= self.game.grid.getInvincibilityTime()
+
+-- Grid constraints
+
+context Grid
+  inv: self.level >= 0
