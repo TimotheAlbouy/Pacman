@@ -153,7 +153,7 @@ context GumType
 -- Sprite constraints
 
 context Sprite::move()
-  -- The sprite can move one square at a time horizontally or vertically.
+  -- The sprite can move one cell at a time horizontally or vertically.
   -- It can also stay still.
   post: (self.corridor.x = self.corridor.x@pre and
           (self.corridor.y = self.corridor.y@pre+1 or
@@ -179,7 +179,7 @@ context Pacman::move()
         then self.counterInvincibility = 0
 		else true
 		endif
-  -- There is no gum on a square where the pacman passed.
+  -- There is no gum on a cell where the pacman passed.
   post: self.corridor.gum->size() = 0
 
 context Pacman::isInvincible(): Boolean

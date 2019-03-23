@@ -1,4 +1,4 @@
-package pacman;
+package pacman.hci;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,17 +28,17 @@ public class Canvas {
     /**
      * The canvas initial width
      */
-    public static final int WIDTH = 500;
+    public static final int WIDTH = 600;
     
     /**
      * The canvas initial height
      */
-    public static final int HEIGHT = 500;
+    public static final int HEIGHT = 600;
     
     /**
      * The canvas initial background color
      */
-    public static final Color BACKGROUND = Color.WHITE;
+    public static final Color BACKGROUND = Color.GRAY;
 
     /**
      * this class unique instance (singleton)
@@ -75,7 +75,7 @@ public class Canvas {
 
     /**
      * the reference objects used as keys in the shapes map in the
-     * order of their addition (cf {@link #draw()})
+     * order of their addition
      */
     private final Queue<Object> objects;
 
@@ -91,6 +91,11 @@ public class Canvas {
      * currently being pressed
      */
     private boolean upPressed, downPressed, leftPressed, rightPressed;
+
+    /**
+     * The move whose event has been catched but that hasn't been executed yet.
+     */
+    private Direction pendingKeyPressed;
 
     /**
      * Create a Canvas.
@@ -109,6 +114,7 @@ public class Canvas {
 
         this.frame.pack();
 
+        this.frame.setResizable(false);
         this.canvas.addKeyListener(new KeyboardListener());
         this.canvas.setFocusable(true);
     }
@@ -220,6 +226,17 @@ public class Canvas {
         return this.rightPressed;
     }
 
+    /**
+     * Pops the pending move.
+     *
+     * @return a direction telling which way to go
+     */
+    public Direction popPendingKeyPressed() {
+        Direction pendingKeyPressed = this.pendingKeyPressed;
+        this.pendingKeyPressed = null;
+        return pendingKeyPressed;
+    }
+
     //-------------------------------------------------------------------------
     // Inner classes
     //-------------------------------------------------------------------------
@@ -297,15 +314,19 @@ public class Canvas {
             switch (event.getKeyCode()) {
                 case KeyEvent.VK_UP:
                     upPressed = true;
+                    pendingKeyPressed = Direction.UP;
                     break;
                 case KeyEvent.VK_DOWN:
                     downPressed = true;
+                    pendingKeyPressed = Direction.DOWN;
                     break;
                 case KeyEvent.VK_LEFT:
                     leftPressed = true;
+                    pendingKeyPressed = Direction.LEFT;
                     break;
                 case KeyEvent.VK_RIGHT:
                     rightPressed = true;
+                    pendingKeyPressed = Direction.RIGHT;
                     break;
             }
         }
