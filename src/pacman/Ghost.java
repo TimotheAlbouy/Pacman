@@ -10,8 +10,11 @@ import pacman.hci.Square;
 
 public class Ghost extends Sprite {
 	
-	private boolean isEaten = false;
-	private ArrayList<Direction> pathQueue = new ArrayList<Direction>();
+	private long beginEaten = 0;
+	private Color color;
+	private final Color EATEN_COLOR = Color.LIGHT_GRAY;
+	public static final int POINTS = 100;
+	//private ArrayList<Direction> pathQueue = new ArrayList<Direction>();
 
 	/**
 	 * Create a new ghost
@@ -20,6 +23,7 @@ public class Ghost extends Sprite {
 	 */
 	public Ghost(Corridor location, Color color) {
 		super(location, Ghost.getGhostFigures(location, color));
+		this.color = color;
 	}
 
 	/**
@@ -55,20 +59,25 @@ public class Ghost extends Sprite {
 		Game game = Game.getGame();
 		int x = this.getX();
 		int y = this.getY();
-		Cell newLocation = null;
+		Cell newCell = null;
 		int randomNum;
 		do {
 			randomNum = ThreadLocalRandom.current().nextInt(0, 4);
 			if (randomNum == 0 && game.getCell(x, y-1) instanceof Corridor)
-				newLocation = game.getCell(x, y-1);
+				newCell = game.getCell(x, y-1);
 			else if (randomNum == 1 && game.getCell(x, y+1) instanceof Corridor)
-				newLocation = game.getCell(x, y+1);
+				newCell = game.getCell(x, y+1);
 			else if (randomNum == 2 && game.getCell(x-1, y) instanceof Corridor)
-				newLocation = game.getCell(x-1, y);
+				newCell = game.getCell(x-1, y);
 			else if (randomNum == 3 && game.getCell(x+1, y) instanceof Corridor)
-				newLocation = game.getCell(x+1, y);
-		} while (newLocation == null);
-		this.setLocation((Corridor)(newLocation)); 
+				newCell = game.getCell(x+1, y);
+		} while (newCell == null);
+		Corridor newLocation = (Corridor)(newCell);
+		this.setLocation(newLocation);
+
+		//Set the ghost color depending on if it is eaten
+		if (this.getIsEaten()) this.setColor(this.EATEN_COLOR);
+		else this.setColor(this.color);
 	}
 
 	/**
@@ -83,18 +92,15 @@ public class Ghost extends Sprite {
 	 * @return true if the ghost is eaten
 	 */
 	public boolean getIsEaten() {
-		return this.isEaten;
+		long eatenTime = Game.getGame().getEatenTime();
+		return this.beginEaten + eatenTime > System.currentTimeMillis();
 	}
 
 	/**
-	 * Set a new value for isEaten
-	 * @param isEaten the new value
+	 * Set a timestamp for when the ghost is eaten
 	 */
-	public void setIsEaten(boolean isEaten) {
-		this.isEaten = isEaten;
-		if (isEaten)
-			this.setColor(Color.LIGHT_GRAY);
-		else this.setColor(Color.CYAN);
+	public void eaten() {
+		this.beginEaten = System.currentTimeMillis();
 	}
 
 }

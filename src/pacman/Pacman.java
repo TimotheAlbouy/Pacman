@@ -47,7 +47,7 @@ public class Pacman extends Sprite {
 				top,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+				Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left+side,
@@ -56,7 +56,7 @@ public class Pacman extends Sprite {
 				top+3*side/4,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+                Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left+side/4,
@@ -65,7 +65,7 @@ public class Pacman extends Sprite {
 				top+side,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+                Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left,

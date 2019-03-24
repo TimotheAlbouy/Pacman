@@ -185,6 +185,14 @@ public class Game {
     }
 
     /**
+     * Give the time during which the ghosts are eaten
+     * @return the corresponding time
+     */
+    public long getEatenTime() {
+        return Math.round(-0.2*this.level+30)*1000;
+    }
+
+    /**
      * Initialize all the attributes of the game
      */
     private void initialize() {
@@ -304,8 +312,8 @@ public class Game {
         if (!ghost.getIsEaten()) {
             //If the pacman eats the ghost
             if (this.pacman.isInvincible()) {
-                ghost.setIsEaten(true);
-                //this.score += 100;
+                ghost.eaten();
+                this.score += Ghost.POINTS;
             }
             //If the ghost kills the pacman
             else {
