@@ -136,34 +136,29 @@ public class Game {
 	private void play() {
 		while (!this.isGameOver()) {
 			//Moving the sprites
+			Corridor oldPL = this.pacman.getLocation();
 			this.pacman.move();
-			for (Ghost g: this.ghosts)
+			Corridor newPL = this.pacman.getLocation();
+			Corridor[] oldGLs = new Corridor[this.ghosts.length];
+			Corridor[] newGLs = new Corridor[this.ghosts.length];
+			for (int i = 0; i < this.ghosts.length; i++) {
+				Ghost g = this.ghosts[i];
+				oldGLs[i] = g.getLocation();
 				g.move();
+				newGLs[i] = g.getLocation();
+			}
 			//Repaint the canvas
 			Canvas canvas = Canvas.getCanvas();
 			canvas.redraw();
 
 			//Checks if there is a collision between the pacman and the ghosts
-			Corridor pl = this.pacman.getLocation();
-			for (Ghost ghost: this.ghosts) {
-				Corridor gl = ghost.getLocation();
+			for (int i = 0; i < this.ghosts.length; i++) {
+				Ghost ghost = this.ghosts[i];
+				Corridor oldGL = oldGLs[i];
+				Corridor newGL = newGLs[i];
 				//If there is a collision
-				if (pl == gl) {
-					if (!ghost.getIsEaten()) {
-						//If the pacman eats the ghost
-						if (this.pacman.isInvincible()) {
-							ghost.setIsEaten(true);
-							//this.score += 100;
-						}
-						//If the ghost kills the pacman
-						else {
-							this.lives--;
-							this.pacman.setLocation(this.grid.getInitLocationPacman());
-							for (Ghost g : this.ghosts)
-								g.setLocation(this.grid.getInitLocationGhosts());
-						}
-					}
-				}
+				if (this.isColliding(oldPL, newPL, oldGL, newGL))
+					this.handleCollision(ghost);
 			}
 			
 			if (this.levelFinished())
@@ -171,6 +166,27 @@ public class Game {
 
 			//Pause for 2/10th of a second
 			canvas.wait(400);
+		}
+	}
+
+	private boolean isColliding(Corridor oldPL, Corridor newPL, Corridor oldGL, Corridor newGL) {
+		return (newPL == newGL) || (newPL == oldGL && newGL == oldPL);
+	}
+
+	private void handleCollision(Ghost ghost) {
+		if (!ghost.getIsEaten()) {
+			//If the pacman eats the ghost
+			if (this.pacman.isInvincible()) {
+				ghost.setIsEaten(true);
+				//this.score += 100;
+			}
+			//If the ghost kills the pacman
+			else {
+				this.lives--;
+				this.pacman.setLocation(this.grid.getInitLocationPacman());
+				for (Ghost g : this.ghosts)
+					g.setLocation(this.grid.getInitLocationGhosts());
+			}
 		}
 	}
 

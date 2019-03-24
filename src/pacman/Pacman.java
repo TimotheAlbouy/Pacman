@@ -87,10 +87,9 @@ public class Pacman extends Sprite {
 	
 	public void move() {
 		Game game = Game.getGame();
-		Corridor location = this.getLocation();
-		int x = location.getX();
-		int y = location.getY();
-		Cell newCell = location;
+		int x = this.getX();
+		int y = this.getY();
+		Cell newCell = this.getLocation();
 		//If there is a move catched by the keyboard listener waiting to be executed.
 		Direction pendingMove = Canvas.getCanvas().popPendingKeyPressed();
 		if (pendingMove != null) {

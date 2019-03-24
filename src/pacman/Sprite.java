@@ -18,10 +18,6 @@ public abstract class Sprite extends CompoundFigure {
 		super.move(dx*Grid.getSquareSide(), dy*Grid.getSquareSide());
 	}
 	
-	public Corridor getLocation() {
-		return this.location;
-	}
-	
 	public void setLocation(Corridor location) {
 		int oldX = this.location.getX();
 		int oldY = this.location.getY();
@@ -29,6 +25,18 @@ public abstract class Sprite extends CompoundFigure {
 		int newY = location.getY();
 		this.move(newX-oldX, newY-oldY);
 		this.location = location;
+	}
+
+	public int getX() {
+		return this.location.getX();
+	}
+
+	public int getY() {
+		return this.location.getY();
+	}
+
+	public Corridor getLocation() {
+		return this.location;
 	}
 	
 }

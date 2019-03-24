@@ -38,10 +38,9 @@ public class Ghost extends Sprite {
 	}
 	
 	public void move() {
-		Corridor location = this.getLocation();
 		Game game = Game.getGame();
-		int x = location.getX();
-		int y = location.getY();
+		int x = this.getX();
+		int y = this.getY();
 		Cell newLocation = null;
 		int randomNum;
 		do {
@@ -67,7 +66,6 @@ public class Ghost extends Sprite {
 	}
 	
 	public void setIsEaten(boolean isEaten) {
-		System.out.println("Ghost eaten.");
 		this.isEaten = isEaten;
 		if (isEaten)
 			this.setColor(Color.LIGHT_GRAY);
