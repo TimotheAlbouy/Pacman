@@ -9,15 +9,16 @@ public class Game {
     // Static part
     //-------------------------------------------------------------------------
 
+    //Text attributes
     private static final Color TEXT_COLOR = Color.RED;
-    private static final int UPPER_LEFT_X = 0;
-    private static final int UPPER_LEFT_Y = 0;
+    private static final int LEFT_X = 0;
+    private static final int MIDDLE_X = Canvas.WIDTH/3;
+    private static final int RIGHT_X = 2*Canvas.WIDTH/3;
+    private static final int UPPER_Y = 0;
+    private static final int LOWER_Y = Canvas.WIDTH-Grid.getSquareSide()/2;
     private static String upperLeftText = "";
-    private static final int LOWER_LEFT_X = 0;
-    private static final int LOWER_LEFT_Y = Canvas.WIDTH-Grid.getSquareSide();
     private static String lowerLeftText = "";
-    private static final int LOWER_RIGHT_X = Canvas.WIDTH/2;
-    private static final int LOWER_RIGHT_Y = Canvas.WIDTH-Grid.getSquareSide();
+    private static String lowerMiddleText = "";
     private static String lowerRightText = "";
 
     /**
@@ -77,8 +78,8 @@ public class Game {
             text,
             Game.TEXT_COLOR,
             text,
-            Game.UPPER_LEFT_X,
-            Game.UPPER_LEFT_Y
+            Game.LEFT_X,
+            Game.UPPER_Y
         );
     }
 
@@ -90,8 +91,21 @@ public class Game {
             text,
             Game.TEXT_COLOR,
             text,
-            Game.LOWER_LEFT_X,
-            Game.LOWER_LEFT_Y
+            Game.LEFT_X,
+            Game.LOWER_Y
+        );
+    }
+
+    private void changeLowerMiddleText(String text) {
+        Canvas canvas = Canvas.getCanvas();
+        canvas.erase(Game.lowerMiddleText);
+        Game.lowerMiddleText = text;
+        canvas.drawString(
+            text,
+            Game.TEXT_COLOR,
+            text,
+            Game.MIDDLE_X,
+            Game.LOWER_Y
         );
     }
 
@@ -103,8 +117,8 @@ public class Game {
             text,
             Game.TEXT_COLOR,
             text,
-            Game.LOWER_RIGHT_X,
-            Game.LOWER_RIGHT_Y
+            Game.RIGHT_X,
+            Game.LOWER_Y
         );
     }
 
@@ -143,7 +157,12 @@ public class Game {
             new Ghost(initLocationGhosts, Color.GREEN),
             new Ghost(initLocationGhosts, Color.CYAN)
         };
-        this.changeLowerLeftText("Score: 0");
+        //Initialize display zones
+        this.changeLowerLeftText("Score: "+this.score);
+        this.changeLowerMiddleText("Lives: "+this.lives);
+        this.changeLowerRightText("Level: "+this.level);
+        //Wait 2 seconds before the beginning
+        Canvas.getCanvas().wait(2000);
 		/* post: self.grid.oclIsNew()
 		  post: self.grid.squares->forAll(s | s.oclIsNew())
 		  post: self.pacman.oclIsNew()
@@ -159,6 +178,13 @@ public class Game {
 
     public int getLevel() {
         return this.level;
+    }
+
+    private void loseLife() {
+        this.lives--;
+        this.changeLowerMiddleText("Lives: "+this.lives);
+        //Wait 2 seconds
+        Canvas.getCanvas().wait(2000);
     }
 
     private boolean levelFinished() {
@@ -183,6 +209,7 @@ public class Game {
     private void passNextLevel() {
         /* post: self.grid.oclIsNew() */
         this.level++;
+        this.changeLowerRightText("Level: "+this.level);
         for (int i = 0; i < Grid.SIDE_IN_SQUARES; i++) {
             for (int j = 0; j < Grid.SIDE_IN_SQUARES; j++) {
                 Cell cell = this.grid.getCell(i, j);
@@ -208,7 +235,7 @@ public class Game {
             }
             //If the ghost kills the pacman
             else {
-                this.lives--;
+                this.loseLife();
                 this.pacman.setLocation(this.grid.getInitLocationPacman());
                 for (Ghost g : this.ghosts)
                     g.setLocation(this.grid.getInitLocationGhosts());
@@ -247,7 +274,7 @@ public class Game {
             if (this.levelFinished())
                 this.passNextLevel();
 
-            //Pause for 2/10th of a second
+            //Pause for 4/10th of a second
             canvas.wait(400);
         }
     }
