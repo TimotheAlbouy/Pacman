@@ -13,11 +13,11 @@ public class Ghost extends Sprite {
 	private boolean isEaten = false;
 	private ArrayList<Direction> pathQueue = new ArrayList<Direction>();
 	
-	public Ghost(Corridor location) {
-		super(location, Ghost.getGhostFigures(location));
+	public Ghost(Corridor location, Color color) {
+		super(location, Ghost.getGhostFigures(location, color));
 	}
 
-	private static Figure[] getGhostFigures(Corridor location) {
+	private static Figure[] getGhostFigures(Corridor location, Color color) {
 		int left = Grid.calculateCanvasCoordinate(location.getX());
 		int top = Grid.calculateCanvasCoordinate(location.getY());
 		int side = Grid.getSquareSide();
@@ -26,13 +26,13 @@ public class Ghost extends Sprite {
 				2*side/5,
 				left+3*side/10,
 				top+side/6,
-				Color.CYAN
+				color
 			),
 			new Square(
 				2*side/5,
 				left+3*side/10,
 				top+11*side/30,
-				Color.CYAN
+				color
 			)
 		};
 	}
@@ -57,6 +57,9 @@ public class Ghost extends Sprite {
 		this.setLocation((Corridor)(newLocation)); 
 	}
 
+	/**
+	 * using breadth-first search (BFS)
+	 */
 	private void findPath() {
 		//
 	}
