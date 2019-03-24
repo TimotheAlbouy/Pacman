@@ -58,18 +58,33 @@ public class Game {
     private Ghost[] ghosts;
     private Grid grid;
 
+    /**
+     * Create a new game
+     */
     private Game() {
         this.initialize();
     }
 
+    /**
+     * Give the number of lives remaining
+     * @return the number of lives
+     */
     public int getLives() {
         return this.lives;
     }
 
+    /**
+     * Give the score of the player
+     * @return the score
+     */
     public int getScore() {
         return this.score;
     }
 
+    /**
+     * Change the text appearing if the upper left corner of the window
+     * @param text the text to be displayed
+     */
     private void changeUpperLeftText(String text) {
         Canvas canvas = Canvas.getCanvas();
         canvas.erase(Game.upperLeftText);
@@ -83,6 +98,10 @@ public class Game {
         );
     }
 
+    /**
+     * Change the text appearing if the lower left corner of the window
+     * @param text the text to be displayed
+     */
     private void changeLowerLeftText(String text) {
         Canvas canvas = Canvas.getCanvas();
         canvas.erase(Game.lowerLeftText);
@@ -96,6 +115,10 @@ public class Game {
         );
     }
 
+    /**
+     * Change the text appearing if the middle of the lower side of the window
+     * @param text the text to be displayed
+     */
     private void changeLowerMiddleText(String text) {
         Canvas canvas = Canvas.getCanvas();
         canvas.erase(Game.lowerMiddleText);
@@ -109,6 +132,10 @@ public class Game {
         );
     }
 
+    /**
+     * Change the text appearing if the lower right corner of the window
+     * @param text the text to be displayed
+     */
     private void changeLowerRightText(String text) {
         Canvas canvas = Canvas.getCanvas();
         canvas.erase(Game.lowerRightText);
@@ -122,23 +149,44 @@ public class Game {
         );
     }
 
+    /**
+     * Add points to the player's score
+     * @param points the points to be added
+     */
     public void addScore(int points) {
         this.score += points;
         this.changeLowerLeftText("Score: "+this.score);
     }
 
+    /**
+     * Get the best score of the player
+     * @return
+     */
     public int getBestScore() {
         return this.bestScore;
     }
 
+    /**
+     * Get the cell at the given coordinates
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the corresponding cell
+     */
     public Cell getCell(int x, int y) {
         return this.grid.getCell(x, y);
     }
 
-    long getInvincibilityTime() {
+    /**
+     * Give the invincibility time of the current level
+     * @return the corresponding invincibility time
+     */
+    public long getInvincibilityTime() {
         return Math.round(-0.5*this.level+30)*1000;
     }
 
+    /**
+     * Initialize all the attributes of the game
+     */
     private void initialize() {
         this.lives = 4;
         this.level = 1;
@@ -172,14 +220,25 @@ public class Game {
 
     }
 
+    /**
+     * Tell if the game is over
+     * @return true if the player has no remaining life
+     */
     private boolean isGameOver() {
         return this.lives == 0;
     }
 
+    /**
+     * Give the current level of the game
+     * @return the level
+     */
     public int getLevel() {
         return this.level;
     }
 
+    /**
+     * Execute all the operations if the player loses a life
+     */
     private void loseLife() {
         this.lives--;
         this.changeLowerMiddleText("Lives: "+this.lives);
@@ -187,6 +246,10 @@ public class Game {
         Canvas.getCanvas().wait(2000);
     }
 
+    /**
+     * Tell if the level is finished
+     * @return true if there is no gum remaining
+     */
     private boolean levelFinished() {
         boolean ret = false;
         int i = 0;
@@ -206,6 +269,9 @@ public class Game {
         /* post: result = Corridor.allInstances()->forAll(c | c.gum->size() = 0) */
     }
 
+    /**
+     * Execute all the operations if the level is finished
+     */
     private void passNextLevel() {
         /* post: self.grid.oclIsNew() */
         this.level++;
@@ -222,10 +288,22 @@ public class Game {
         }
     }
 
+    /**
+     * Tell if the pacman and the ghost are colliding
+     * @param oldPL old pacman location
+     * @param newPL new pacman location
+     * @param oldGL old ghost location
+     * @param newGL new ghost location
+     * @return true if the pacman and the ghost are colliding
+     */
     private boolean isColliding(Corridor oldPL, Corridor newPL, Corridor oldGL, Corridor newGL) {
         return (newPL == newGL) || (newPL == oldGL && newGL == oldPL);
     }
 
+    /**
+     * Do all the operations if the pacman and the ghost collided
+     * @param ghost the ghost that collided with the pacman
+     */
     private void handleCollision(Ghost ghost) {
         if (!ghost.getIsEaten()) {
             //If the pacman eats the ghost
@@ -243,8 +321,15 @@ public class Game {
         }
     }
 
+    /**
+     * Loop running while the game is not over
+     */
     private void play() {
         while (!this.isGameOver()) {
+            //Repaint the canvas
+            Canvas canvas = Canvas.getCanvas();
+            canvas.redraw();
+
             //Moving the sprites
             Corridor oldPL = this.pacman.getLocation();
             this.pacman.move();
@@ -257,9 +342,6 @@ public class Game {
                 g.move();
                 newGLs[i] = g.getLocation();
             }
-            //Repaint the canvas
-            Canvas canvas = Canvas.getCanvas();
-            canvas.redraw();
 
             //Checks if there is a collision between the pacman and the ghosts
             for (int i = 0; i < this.ghosts.length; i++) {

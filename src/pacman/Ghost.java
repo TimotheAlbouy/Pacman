@@ -12,11 +12,22 @@ public class Ghost extends Sprite {
 	
 	private boolean isEaten = false;
 	private ArrayList<Direction> pathQueue = new ArrayList<Direction>();
-	
+
+	/**
+	 * Create a new ghost
+	 * @param location the location of the ghost
+	 * @param color the color of the ghost
+	 */
 	public Ghost(Corridor location, Color color) {
 		super(location, Ghost.getGhostFigures(location, color));
 	}
 
+	/**
+	 * Give the list of figures making up the ghost
+	 * @param location the location of the ghost
+	 * @param color the color of the ghost
+	 * @return the list of figures
+	 */
 	private static Figure[] getGhostFigures(Corridor location, Color color) {
 		int left = Grid.calculateCanvasCoordinate(location.getX());
 		int top = Grid.calculateCanvasCoordinate(location.getY());
@@ -36,7 +47,10 @@ public class Ghost extends Sprite {
 			)
 		};
 	}
-	
+
+	/**
+	 * Execute a move
+	 */
 	public void move() {
 		Game game = Game.getGame();
 		int x = this.getX();
@@ -64,10 +78,18 @@ public class Ghost extends Sprite {
 		//
 	}
 
+	/**
+	 * Tell if the ghost is eaten
+	 * @return true if the ghost is eaten
+	 */
 	public boolean getIsEaten() {
 		return this.isEaten;
 	}
-	
+
+	/**
+	 * Set a new value for isEaten
+	 * @param isEaten the new value
+	 */
 	public void setIsEaten(boolean isEaten) {
 		this.isEaten = isEaten;
 		if (isEaten)

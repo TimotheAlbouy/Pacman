@@ -13,11 +13,20 @@ public class Pacman extends Sprite {
 	private long beginInvincibility = 0;
 	private Direction direction = Direction.LEFT;
 	private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
-	
+
+	/**
+	 * Create a new pacman
+	 * @param location the location of the pacman
+	 */
 	public Pacman(Corridor location) {
 		super(location, Pacman.getPacmanFigures(location));
 	}
 
+	/**
+	 * Give the list of figures of the pacman
+	 * @param location the location of the pacman
+	 * @return the list of figures
+	 */
 	private static Figure[] getPacmanFigures(Corridor location) {
 		int left = Grid.calculateCanvasCoordinate(location.getX());
 		int top = Grid.calculateCanvasCoordinate(location.getY());
@@ -68,10 +77,18 @@ public class Pacman extends Sprite {
 		};
 	}
 
+	/**
+	 * Give the 4 triangles making up the mouth of the pacman
+	 * @return the list of triangles
+	 */
 	private Figure[] getTriangles() {
 		return Arrays.copyOfRange(this.getFigures(), 1, 5);
 	}
 
+	/**
+	 * Change the direction of the pacman
+	 * @param direction the new direction
+	 */
 	private void changeDirection(Direction direction) {
 		this.direction = direction;
 		Figure[] triangles = this.getTriangles();
@@ -85,6 +102,9 @@ public class Pacman extends Sprite {
 		}
 	}
 
+	/**
+	 * Move the pacman
+	 */
 	public void move() {
 		Game game = Game.getGame();
 		int x = this.getX();
@@ -147,6 +167,10 @@ public class Pacman extends Sprite {
 		}
 	}
 
+	/**
+	 * Tell if the pacman is invincible
+	 * @return true if the pacman is invincible
+	 */
 	public boolean isInvincible() {
 		long invincibilityTime = Game.getGame().getInvincibilityTime();
 		return this.beginInvincibility + invincibilityTime < System.currentTimeMillis();

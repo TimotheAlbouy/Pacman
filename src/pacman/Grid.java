@@ -28,6 +28,9 @@ public class Grid extends CompoundFigure {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
+    /**
+     * Create a new grid
+     */
     public Grid() {
         super(Grid.getGridFigures());
         //Set the initial positions of the ghosts and the pacman
@@ -35,6 +38,10 @@ public class Grid extends CompoundFigure {
         this.initLocationGhosts = (Corridor)(this.getCell(7, 7));
     }
 
+    /**
+     * Give the list of figures of the grid (i.e. wall figures and corridor figures)
+     * @return the list of figures
+     */
     private static Figure[] getGridFigures() {
         Figure[] listFigures = new Figure[Grid.SIDE_IN_SQUARES*Grid.SIDE_IN_SQUARES];
         for (int y = 0; y < Grid.SIDE_IN_SQUARES; y++) {
@@ -54,22 +61,45 @@ public class Grid extends CompoundFigure {
         return listFigures;
     }
 
-    public static int calculateCanvasCoordinate(int coord) {
-        return coord*Grid.getSquareSide();
+    /**
+     * Calculate the canvas coordinate (in pixels) from the given index
+     * @param index the index in the grid
+     * @return the canvas coordinate
+     */
+    public static int calculateCanvasCoordinate(int index) {
+        return index*Grid.getSquareSide();
     }
 
+    /**
+     * Give the side of a single square in pixels
+     * @return the number of pixels of the side of a square
+     */
     public static int getSquareSide() {
         return Canvas.HEIGHT/Grid.SIDE_IN_SQUARES;
     }
 
+    /**
+     * Give the initial location of pacman
+     * @return the location of the pacman
+     */
     public Corridor getInitLocationPacman() {
         return this.initLocationPacman;
     }
 
+    /**
+     * Give the initial location of the ghosts
+     * @return the location of the ghosts
+     */
     public Corridor getInitLocationGhosts() {
         return this.initLocationGhosts;
     }
 
+    /**
+     * Give the cell at the given coordinates
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the corresponding cell
+     */
     public Cell getCell(int x, int y) {
         return (Cell)(this.getFigures()[x + Grid.SIDE_IN_SQUARES*y]);
     }
