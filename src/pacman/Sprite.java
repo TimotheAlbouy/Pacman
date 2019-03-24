@@ -10,6 +10,7 @@ public abstract class Sprite extends CompoundFigure {
 	public Sprite(Corridor location, Figure[] figures) {
 		super(figures);
 		this.location = location;
+		System.out.println("Passé Sprite.");
 	}
 	
 	public abstract void move();

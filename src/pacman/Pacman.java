@@ -10,13 +10,12 @@ import java.util.Arrays;
 
 public class Pacman extends Sprite {
 
-	private long beginInvincibility = -Game.getGame().getInvincibilityTime();
+	private long beginInvincibility = 0;
 	private Direction direction = Direction.LEFT;
 	private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 	
 	public Pacman(Corridor location) {
 		super(location, Pacman.getPacmanFigures(location));
-		this.changeDirection(Direction.LEFT);
 	}
 
 	private static Figure[] getPacmanFigures(Corridor location) {
@@ -37,7 +36,7 @@ public class Pacman extends Sprite {
 				top,
 				left+side/2,
 				top+side/2,
-				Pacman.TRANSPARENT
+				new Color(0, 0, 0, 0)
 			),
 			new Triangle(
 				left+side,
@@ -46,7 +45,7 @@ public class Pacman extends Sprite {
 				top+3*side/4,
 				left+side/2,
 				top+side/2,
-				Pacman.TRANSPARENT
+				new Color(0, 0, 0, 0)
 			),
 			new Triangle(
 				left+side/4,
@@ -55,7 +54,7 @@ public class Pacman extends Sprite {
 				top+side,
 				left+side/2,
 				top+side/2,
-				Pacman.TRANSPARENT
+				new Color(0, 0, 0, 0)
 			),
 			new Triangle(
 				left,
@@ -64,7 +63,7 @@ public class Pacman extends Sprite {
 				top+3*side/4,
 				left+side/2,
 				top+side/2,
-				Pacman.TRANSPARENT
+				Canvas.BACKGROUND
 			),
 		};
 	}
@@ -85,7 +84,7 @@ public class Pacman extends Sprite {
 			case LEFT: triangles[3].setColor(Canvas.BACKGROUND); break;
 		}
 	}
-	
+
 	public void move() {
 		Game game = Game.getGame();
 		int x = this.getX();
@@ -134,7 +133,7 @@ public class Pacman extends Sprite {
 		}
 		Corridor newLocation = (Corridor)(newCell);
 		this.setLocation(newLocation);
-		
+
 		//If the pacman eats a gum
 		Gum gum = newLocation.getGum();
 		if (gum != null) {
@@ -147,10 +146,10 @@ public class Pacman extends Sprite {
 				this.beginInvincibility = System.currentTimeMillis();
 		}
 	}
-	
+
 	public boolean isInvincible() {
 		long invincibilityTime = Game.getGame().getInvincibilityTime();
 		return this.beginInvincibility + invincibilityTime < System.currentTimeMillis();
 	}
-	
+
 }
