@@ -13,6 +13,8 @@ public class Pacman extends Sprite {
 	private long beginInvincibility = 0;
 	private Direction direction = Direction.LEFT;
 	private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+	private static final Color INVINCIBLE_COLOR = Color.RED;
+	private static final Color NORMAL_COLOR = Color.ORANGE;
 
 	/**
 	 * Create a new pacman
@@ -36,7 +38,7 @@ public class Pacman extends Sprite {
 				2*side/3,
 				left+side/6,
 				top+side/6,
-				Color.ORANGE
+				Pacman.NORMAL_COLOR
 			),
 			new Triangle(
 				left+side/4,
@@ -154,13 +156,27 @@ public class Pacman extends Sprite {
 		Corridor newLocation = (Corridor)(newCell);
 		this.setLocation(newLocation);
 
-		//If the pacman eats a gum
-		Gum gum = newLocation.getGum();
+		//Check if the pacman eats a gum
+		this.checkEatGum(newLocation);
+
+		//Set the pacman color depending on the invincibility
+		Figure corpse = this.getFigures()[0];
+		if (this.isInvincible()) corpse.setColor(Pacman.INVINCIBLE_COLOR);
+		else corpse.setColor(Pacman.NORMAL_COLOR);
+	}
+
+	/**
+	 * Check if the pacman is eating a gum and do all the operations if it is the case
+	 * @param location the location of the pacman
+	 */
+	private void checkEatGum(Corridor location) {
+		Game game = Game.getGame();
+		Gum gum = location.getGum();
 		if (gum != null) {
 			int gumPoints = gum.getPoints();
 			game.addScore(gumPoints);
-            newLocation.setGum(null);
-            newLocation.erase();
+			location.setGum(null);
+			location.erase();
 			//If the gum eaten is a super gum
 			if (gum.getGumType() == GumType.SUPER)
 				this.beginInvincibility = System.currentTimeMillis();
@@ -173,7 +189,7 @@ public class Pacman extends Sprite {
 	 */
 	public boolean isInvincible() {
 		long invincibilityTime = Game.getGame().getInvincibilityTime();
-		return this.beginInvincibility + invincibilityTime < System.currentTimeMillis();
+		return this.beginInvincibility + invincibilityTime > System.currentTimeMillis();
 	}
 
 }

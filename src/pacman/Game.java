@@ -225,7 +225,7 @@ public class Game {
      * @return true if the player has no remaining life
      */
     private boolean isGameOver() {
-        return this.lives == 0;
+        return this.lives <= 0;
     }
 
     /**
@@ -251,21 +251,17 @@ public class Game {
      * @return true if there is no gum remaining
      */
     private boolean levelFinished() {
-        boolean ret = false;
-        int i = 0;
-        while (i < this.grid.getHeight() && !ret) {
-            int j = 0;
-            while (j < this.grid.getWidth() && !ret) {
+        for (int i = 0; i < Grid.SIDE_IN_SQUARES; i++) {
+            for (int j = 0; j < Grid.SIDE_IN_SQUARES; j++) {
                 Cell cell = this.grid.getCell(i, j);
                 if (cell instanceof Corridor) {
                     Corridor corridor = (Corridor)(cell);
-                    ret = corridor.getGum() != null;
+                    if (corridor.getGum() != null)
+                        return false;
                 }
-                j++;
             }
-            i++;
         }
-        return ret;
+        return true;
         /* post: result = Corridor.allInstances()->forAll(c | c.gum->size() = 0) */
     }
 
@@ -325,9 +321,9 @@ public class Game {
      * Loop running while the game is not over
      */
     private void play() {
+        Canvas canvas = Canvas.getCanvas();
         while (!this.isGameOver()) {
             //Repaint the canvas
-            Canvas canvas = Canvas.getCanvas();
             canvas.redraw();
 
             //Moving the sprites
@@ -359,6 +355,8 @@ public class Game {
             //Pause for 4/10th of a second
             canvas.wait(400);
         }
+        this.changeUpperLeftText("GAME OVER");
+        canvas.redraw();
     }
 
 }
