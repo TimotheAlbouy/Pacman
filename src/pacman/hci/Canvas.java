@@ -28,12 +28,12 @@ public class Canvas {
     /**
      * The canvas initial width
      */
-    public static final int WIDTH = 600;
+    public static final int WIDTH = 500;
     
     /**
      * The canvas initial height
      */
-    public static final int HEIGHT = 600;
+    public static final int HEIGHT = 500;
     
     /**
      * The canvas initial background color

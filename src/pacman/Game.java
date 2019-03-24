@@ -9,6 +9,17 @@ public class Game {
     // Static part
     //-------------------------------------------------------------------------
 
+    private static final Color TEXT_COLOR = Color.RED;
+    private static final int UPPER_LEFT_X = 0;
+    private static final int UPPER_LEFT_Y = 0;
+    private static String upperLeftText = "";
+    private static final int LOWER_LEFT_X = 0;
+    private static final int LOWER_LEFT_Y = Canvas.WIDTH-Grid.getSquareSide();
+    private static String lowerLeftText = "";
+    private static final int LOWER_RIGHT_X = Canvas.WIDTH/2;
+    private static final int LOWER_RIGHT_Y = Canvas.WIDTH-Grid.getSquareSide();
+    private static String lowerRightText = "";
+
     /**
      * Entry point of the program
      * @param args command-line arguments
@@ -58,8 +69,48 @@ public class Game {
         return this.score;
     }
 
+    private void changeUpperLeftText(String text) {
+        Canvas canvas = Canvas.getCanvas();
+        canvas.erase(Game.upperLeftText);
+        Game.upperLeftText = text;
+        canvas.drawString(
+            text,
+            Game.TEXT_COLOR,
+            text,
+            Game.UPPER_LEFT_X,
+            Game.UPPER_LEFT_Y
+        );
+    }
+
+    private void changeLowerLeftText(String text) {
+        Canvas canvas = Canvas.getCanvas();
+        canvas.erase(Game.lowerLeftText);
+        Game.lowerLeftText = text;
+        canvas.drawString(
+            text,
+            Game.TEXT_COLOR,
+            text,
+            Game.LOWER_LEFT_X,
+            Game.LOWER_LEFT_Y
+        );
+    }
+
+    private void changeLowerRightText(String text) {
+        Canvas canvas = Canvas.getCanvas();
+        canvas.erase(Game.lowerRightText);
+        Game.lowerRightText = text;
+        canvas.drawString(
+            text,
+            Game.TEXT_COLOR,
+            text,
+            Game.LOWER_RIGHT_X,
+            Game.LOWER_RIGHT_Y
+        );
+    }
+
     public void addScore(int points) {
         this.score += points;
+        this.changeLowerLeftText("Score: "+this.score);
     }
 
     public int getBestScore() {
@@ -92,6 +143,7 @@ public class Game {
             new Ghost(initLocationGhosts, Color.GREEN),
             new Ghost(initLocationGhosts, Color.CYAN)
         };
+        this.changeLowerLeftText("Score: 0");
 		/* post: self.grid.oclIsNew()
 		  post: self.grid.squares->forAll(s | s.oclIsNew())
 		  post: self.pacman.oclIsNew()
@@ -143,6 +195,27 @@ public class Game {
         }
     }
 
+    private boolean isColliding(Corridor oldPL, Corridor newPL, Corridor oldGL, Corridor newGL) {
+        return (newPL == newGL) || (newPL == oldGL && newGL == oldPL);
+    }
+
+    private void handleCollision(Ghost ghost) {
+        if (!ghost.getIsEaten()) {
+            //If the pacman eats the ghost
+            if (this.pacman.isInvincible()) {
+                ghost.setIsEaten(true);
+                //this.score += 100;
+            }
+            //If the ghost kills the pacman
+            else {
+                this.lives--;
+                this.pacman.setLocation(this.grid.getInitLocationPacman());
+                for (Ghost g : this.ghosts)
+                    g.setLocation(this.grid.getInitLocationGhosts());
+            }
+        }
+    }
+
     private void play() {
         while (!this.isGameOver()) {
             //Moving the sprites
@@ -176,27 +249,6 @@ public class Game {
 
             //Pause for 2/10th of a second
             canvas.wait(400);
-        }
-    }
-
-    private boolean isColliding(Corridor oldPL, Corridor newPL, Corridor oldGL, Corridor newGL) {
-        return (newPL == newGL) || (newPL == oldGL && newGL == oldPL);
-    }
-
-    private void handleCollision(Ghost ghost) {
-        if (!ghost.getIsEaten()) {
-            //If the pacman eats the ghost
-            if (this.pacman.isInvincible()) {
-                ghost.setIsEaten(true);
-                //this.score += 100;
-            }
-            //If the ghost kills the pacman
-            else {
-                this.lives--;
-                this.pacman.setLocation(this.grid.getInitLocationPacman());
-                for (Ghost g : this.ghosts)
-                    g.setLocation(this.grid.getInitLocationGhosts());
-            }
         }
     }
 
