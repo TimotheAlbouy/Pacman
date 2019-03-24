@@ -10,12 +10,13 @@ import java.util.Arrays;
 
 public class Pacman extends Sprite {
 
-	private long counterInvincibility = 0;
+	private long beginInvincibility = -Game.getGame().getInvincibilityTime();
 	private Direction direction = Direction.LEFT;
-	private final Color transparent = new Color(0, 0, 0, 0);
+	private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 	
 	public Pacman(Corridor location) {
 		super(location, Pacman.getPacmanFigures(location));
+		this.changeDirection(Direction.LEFT);
 	}
 
 	private static Figure[] getPacmanFigures(Corridor location) {
@@ -36,7 +37,7 @@ public class Pacman extends Sprite {
 				top,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+				Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left+side,
@@ -45,7 +46,7 @@ public class Pacman extends Sprite {
 				top+3*side/4,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+				Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left+side/4,
@@ -54,7 +55,7 @@ public class Pacman extends Sprite {
 				top+side,
 				left+side/2,
 				top+side/2,
-				new Color(0, 0, 0, 0)
+				Pacman.TRANSPARENT
 			),
 			new Triangle(
 				left,
@@ -63,7 +64,7 @@ public class Pacman extends Sprite {
 				top+3*side/4,
 				left+side/2,
 				top+side/2,
-				Canvas.BACKGROUND
+				Pacman.TRANSPARENT
 			),
 		};
 	}
@@ -76,7 +77,7 @@ public class Pacman extends Sprite {
 		this.direction = direction;
 		Figure[] triangles = this.getTriangles();
 		for (Figure triangle : triangles)
-			triangle.setColor(this.transparent);
+			triangle.setColor(Pacman.TRANSPARENT);
 		switch (direction) {
 			case UP: triangles[0].setColor(Canvas.BACKGROUND); break;
 			case RIGHT: triangles[1].setColor(Canvas.BACKGROUND); break;
@@ -143,13 +144,13 @@ public class Pacman extends Sprite {
             newLocation.erase();
 			//If the gum eaten is a super gum
 			if (gum.getGumType() == GumType.SUPER)
-				this.counterInvincibility = System.currentTimeMillis();
+				this.beginInvincibility = System.currentTimeMillis();
 		}
 	}
 	
 	public boolean isInvincible() {
 		long invincibilityTime = Game.getGame().getInvincibilityTime();
-		return this.counterInvincibility + invincibilityTime < System.currentTimeMillis();
+		return this.beginInvincibility + invincibilityTime < System.currentTimeMillis();
 	}
 	
 }
