@@ -4,6 +4,9 @@ import pacman.hci.Circle;
 import pacman.hci.Figure;
 import java.awt.Color;
 
+/**
+ * A type of cell where sprites (ghosts and pacman) can pass through.
+ */
 public class Corridor extends Cell {
 	
 	private Gum gum;
@@ -13,10 +16,14 @@ public class Corridor extends Cell {
 	 * @param x the x coordinate
 	 * @param y the y coordinate
 	 * @param gum the gum contained in the corridor
+	 *
+	 * @pre x >= 0 && x < Grid.SIDE_IN_SQUARES
+	 * @pre y >= 0 && y < Grid.SIDE_IN_SQUARES
 	 */
 	public Corridor(int x, int y, Gum gum) {
 		super(x, y, Corridor.getCorridorFigures(x, y, gum));
 		this.gum = gum;
+		this.invariant();
 	}
 
 	/**
@@ -25,6 +32,9 @@ public class Corridor extends Cell {
 	 * @param y the y coordinate
 	 * @param gum the gum contained in the corridor
 	 * @return the list of figures
+	 *
+	 * @pre x >= 0 && x < Grid.SIDE_IN_SQUARES
+	 * @pre y >= 0 && y < Grid.SIDE_IN_SQUARES
 	 */
 	private static Figure[] getCorridorFigures(int x, int y, Gum gum) {
 		int left = Grid.calculateCanvasCoordinate(x);
@@ -68,6 +78,16 @@ public class Corridor extends Cell {
 	 */
 	public void setGum(Gum gum) {
 		this.gum = gum;
+		this.invariant();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void invariant() {
+		super.invariant();
+		//Nothing
 	}
 	
 }

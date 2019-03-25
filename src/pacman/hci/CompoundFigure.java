@@ -2,6 +2,11 @@ package pacman.hci;
 
 import java.awt.Color;
 
+/**
+ * An abstract figure composed of a multiple shapes
+ *
+ * @inv figures != null && figures.length > 0
+ */
 public class CompoundFigure extends Figure {
 
 	private Figure[] figures;
@@ -9,9 +14,12 @@ public class CompoundFigure extends Figure {
 	/**
 	 * Create a new compound figure
 	 * @param figures the list of figures
+	 *
+	 * @pre figures != null
 	 */
 	public CompoundFigure(Figure[] figures) {
 		this.figures = figures;
+		this.invariant();
 	}
 
 	/**
@@ -21,6 +29,7 @@ public class CompoundFigure extends Figure {
 	public void draw() {
 		for (Figure figure : this.figures)
 			figure.draw();
+		this.invariant();
 	}
 
 	/**
@@ -30,6 +39,7 @@ public class CompoundFigure extends Figure {
 	public void erase() {
 		for (Figure figure : this.figures)
 			figure.erase();
+		this.invariant();
 	}
 	
 	public Figure[] getFigures() {
@@ -46,6 +56,7 @@ public class CompoundFigure extends Figure {
 			if (this.figures[i].getX() < x)
 				x = this.figures[i].getX();
 		}
+		this.invariant();
 		return x;
 	}
 
@@ -60,6 +71,7 @@ public class CompoundFigure extends Figure {
 				y = this.figures[i].getY();
 			}
 		}
+		this.invariant();
 		return y;
 	}
 
@@ -74,6 +86,7 @@ public class CompoundFigure extends Figure {
 				x = this.figures[i].getX();
 			}
 		}
+		this.invariant();
 		return x - this.getX();
 	}
 
@@ -88,6 +101,7 @@ public class CompoundFigure extends Figure {
 				y = this.figures[i].getY();
 			}
 		}
+		this.invariant();
 		return y - this.getY();
 	}
 
@@ -98,6 +112,7 @@ public class CompoundFigure extends Figure {
 	public void move() {
 		for (Figure figure : this.figures)
 			figure.move();
+		this.invariant();
 	}
 
 	/**
@@ -107,6 +122,7 @@ public class CompoundFigure extends Figure {
 	public void move(int dx, int dy) {
 		for (Figure figure : this.figures)
 			figure.move(dx, dy);
+		this.invariant();
 	}
 
 	/**
@@ -116,6 +132,7 @@ public class CompoundFigure extends Figure {
 	public void setColor(Color color) {
 		for (Figure figure : this.figures)
 			figure.setColor(color);
+		this.invariant();
 	}
 
 	/**

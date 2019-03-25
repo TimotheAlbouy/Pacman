@@ -8,6 +8,11 @@ import pacman.hci.Canvas;
 import java.awt.Color;
 import java.util.Arrays;
 
+/**
+ * A type of sprite controlled by the player.
+ *
+ * @inv direction != null
+ */
 public class Pacman extends Sprite {
 
 	private long beginInvincibility = 0;
@@ -19,15 +24,20 @@ public class Pacman extends Sprite {
 	/**
 	 * Create a new pacman
 	 * @param location the location of the pacman
+	 *
+	 * @pre location != null
 	 */
 	public Pacman(Corridor location) {
 		super(location, Pacman.getPacmanFigures(location));
+        this.invariant();
 	}
 
 	/**
 	 * Give the list of figures of the pacman
 	 * @param location the location of the pacman
 	 * @return the list of figures
+	 *
+	 * @pre location != null
 	 */
 	private static Figure[] getPacmanFigures(Corridor location) {
 		int left = Grid.calculateCanvasCoordinate(location.getX());
@@ -90,6 +100,8 @@ public class Pacman extends Sprite {
 	/**
 	 * Change the direction of the pacman
 	 * @param direction the new direction
+	 *
+	 * @pre direction != null
 	 */
 	private void changeDirection(Direction direction) {
 		this.direction = direction;
@@ -102,6 +114,7 @@ public class Pacman extends Sprite {
 			case DOWN: triangles[2].setColor(Canvas.BACKGROUND); break;
 			case LEFT: triangles[3].setColor(Canvas.BACKGROUND); break;
 		}
+        this.invariant();
 	}
 
 	/**
@@ -163,11 +176,15 @@ public class Pacman extends Sprite {
 		Figure corpse = this.getFigures()[0];
 		if (this.isInvincible()) corpse.setColor(Pacman.INVINCIBLE_COLOR);
 		else corpse.setColor(Pacman.NORMAL_COLOR);
+
+		this.invariant();
 	}
 
 	/**
 	 * Check if the pacman is eating a gum and do all the operations if it is the case
 	 * @param location the location of the pacman
+	 *
+	 * @pre location != null
 	 */
 	private void checkEatGum(Corridor location) {
 		Game game = Game.getGame();
@@ -181,6 +198,7 @@ public class Pacman extends Sprite {
 			if (gum.getGumType() == GumType.SUPER)
 				this.beginInvincibility = System.currentTimeMillis();
 		}
+		this.invariant();
 	}
 
 	/**
@@ -190,6 +208,15 @@ public class Pacman extends Sprite {
 	public boolean isInvincible() {
 		long invincibilityTime = Game.getGame().getInvincibilityTime();
 		return this.beginInvincibility + invincibilityTime > System.currentTimeMillis();
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void invariant() {
+        super.invariant();
+        assert direction != null : "Invariant violated: the direction cannot be null";
 	}
 
 }

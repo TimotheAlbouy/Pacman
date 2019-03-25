@@ -1,10 +1,10 @@
-- Nous avons renommé la classe Square du modèle USE en Cell
-pour ne pas créer de conflit avec la classe Square reprise des TP d'IHM.
+- Nous avons renommé la classe 'Square' du modèle USE en 'Cell'
+pour ne pas créer de conflit avec la classe 'Square' reprise des TP d'IHM.
 
 - Nous avons implémenté le pattern Singleton pour la classe Game
-pour ne pas à avoir à se passer la référence de son instance.
+pour ne pas à avoir à se passer la référence de son instance de classe en classe.
 
-- Nous avons renommé l'attribut counterInvincibility de la classe Pacman
-en beginInvincibility
+- Nous avons renommé l'attribut 'counterInvincibility' de la classe Pacman
+en 'beginInvincibility'
 
-- Nous avons rajouté l'attribut beginEaten dans la classe Ghost
+- Nous avons rajouté l'attribut 'beginEaten' dans la classe Ghost

@@ -1,29 +1,35 @@
 package pacman;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import pacman.hci.Direction;
 import pacman.hci.Figure;
 import pacman.hci.Circle;
 import pacman.hci.Square;
 
+/**
+ * A type of sprite that can kill the pacman.
+ *
+ * @inv color != null
+ */
 public class Ghost extends Sprite {
 	
 	private long beginEaten = 0;
 	private Color color;
 	private final Color EATEN_COLOR = Color.LIGHT_GRAY;
 	public static final int POINTS = 100;
-	//private ArrayList<Direction> pathQueue = new ArrayList<Direction>();
 
 	/**
 	 * Create a new ghost
 	 * @param location the location of the ghost
 	 * @param color the color of the ghost
+     *
+     * @pre location != null
+     * @pre color != null
 	 */
 	public Ghost(Corridor location, Color color) {
 		super(location, Ghost.getGhostFigures(location, color));
 		this.color = color;
+        this.invariant();
 	}
 
 	/**
@@ -31,6 +37,9 @@ public class Ghost extends Sprite {
 	 * @param location the location of the ghost
 	 * @param color the color of the ghost
 	 * @return the list of figures
+     *
+     * @pre location != null
+     * @pre color != null
 	 */
 	private static Figure[] getGhostFigures(Corridor location, Color color) {
 		int left = Grid.calculateCanvasCoordinate(location.getX());
@@ -78,13 +87,8 @@ public class Ghost extends Sprite {
 		//Set the ghost color depending on if it is eaten
 		if (this.getIsEaten()) this.setColor(this.EATEN_COLOR);
 		else this.setColor(this.color);
-	}
 
-	/**
-	 * using breadth-first search (BFS)
-	 */
-	private void findPath() {
-		//
+        this.invariant();
 	}
 
 	/**
@@ -101,6 +105,16 @@ public class Ghost extends Sprite {
 	 */
 	public void eaten() {
 		this.beginEaten = System.currentTimeMillis();
+		this.invariant();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void invariant() {
+        super.invariant();
+        assert color != null : "Invariant violated: color cannot be null";
+    }
 
 }

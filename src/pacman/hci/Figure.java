@@ -140,6 +140,8 @@ public abstract class Figure
     /**
      * Set the color of the figure
      * @param color the color of the figure
+     *
+     * @pre color != null
      */
     public abstract void setColor(Color color);
 

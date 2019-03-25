@@ -1,5 +1,10 @@
 package pacman;
 
+/**
+ * A gum contained in a corridor
+ *
+ * @inv gumType != null
+ */
 public class Gum {
 	
 	private GumType gumType;
@@ -7,9 +12,12 @@ public class Gum {
 	/**
 	 * Create a new gum
 	 * @param gumType the type of the gum
+	 *
+	 * @pre gumType != null
 	 */
 	public Gum(GumType gumType){
 		this.gumType = gumType;
+		this.invariant();
 	}
 
 	/**
@@ -18,7 +26,6 @@ public class Gum {
 	 */
 	public int getPoints() {
 		return this.gumType.getPoints() + Game.getGame().getLevel();
-		//getPoints(): Integer = self.gumtype.points + self.corridor.grid.level
 	}
 
 	/**
@@ -27,6 +34,13 @@ public class Gum {
 	 */
 	public GumType getGumType() {
 		return this.gumType;
+	}
+
+	/**
+	 * Check the class invariant
+	 */
+	protected void invariant() {
+		assert this.gumType != null : "Invariant violated: the gum type cannot be null";
 	}
 
 }

@@ -3,6 +3,17 @@ package pacman;
 import java.awt.Color;
 import pacman.hci.Canvas;
 
+/**
+ * A class representing the Pacman game
+ *
+ * @inv lives >= 0
+ * @inv assert level > 1
+ * @inv assert score >= 0
+ * @inv assert bestScore >= 0
+ * @inv assert pacman != null
+ * @inv assert ghosts != null
+ * @inv assert grid != null
+ */
 public class Game {
 
     //-------------------------------------------------------------------------
@@ -49,7 +60,6 @@ public class Game {
     //-------------------------------------------------------------------------
     // Instance part
     //-------------------------------------------------------------------------
-
     private int lives = 4;
     private int level = 1;
     private int score = 0;
@@ -64,6 +74,8 @@ public class Game {
     private Game() {
         //Initialize level
         this.initialize();
+
+        this.invariant();
     }
 
     /**
@@ -97,6 +109,7 @@ public class Game {
             Game.LEFT_X,
             Game.UPPER_Y
         );
+        this.invariant();
     }
 
     /**
@@ -114,6 +127,7 @@ public class Game {
             Game.LEFT_X,
             Game.LOWER_Y
         );
+        this.invariant();
     }
 
     /**
@@ -131,6 +145,7 @@ public class Game {
             Game.MIDDLE_X,
             Game.LOWER_Y
         );
+        this.invariant();
     }
 
     /**
@@ -148,15 +163,19 @@ public class Game {
             Game.RIGHT_X,
             Game.LOWER_Y
         );
+        this.invariant();
     }
 
     /**
      * Add points to the player's score
      * @param points the points to be added
+     *
+     * @pre points >= 0
      */
     public void addScore(int points) {
         this.score += points;
         this.changeLowerLeftText("Score: "+this.score);
+        this.invariant();
     }
 
     /**
@@ -172,6 +191,9 @@ public class Game {
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the corresponding cell
+     *
+     * @pre x >= 0 && x < Grid.SIDE_IN_SQUARES
+     * @pre y >= 0 && y < Grid.SIDE_IN_SQUARES
      */
     public Cell getCell(int x, int y) {
         return this.grid.getCell(x, y);
@@ -227,12 +249,7 @@ public class Game {
 
         //Wait 2 seconds before the beginning
         Canvas.getCanvas().wait(2000);
-		/* post: self.grid.oclIsNew()
-		  post: self.grid.squares->forAll(s | s.oclIsNew())
-		  post: self.pacman.oclIsNew()
-		  post: self.ghosts->forAll(g | g.oclIsNew())
-		  -- post: Corridor.allInstances().gum->forAll(g | g.oclIsNew())
-		  post: GumType.allInstances()->forAll(gt | gt.oclIsNew()) */
+        this.invariant();
     }
 
     /**
@@ -259,6 +276,7 @@ public class Game {
         this.changeLowerMiddleText("Lives: "+this.lives);
         //Wait 2 seconds
         Canvas.getCanvas().wait(2000);
+        this.invariant();
     }
 
     /**
@@ -276,18 +294,18 @@ public class Game {
                 }
             }
         }
+        this.invariant();
         return true;
-        /* post: result = Corridor.allInstances()->forAll(c | c.gum->size() = 0) */
     }
 
     /**
      * Execute all the operations if the level is finished
      */
     private void passNextLevel() {
-        /* post: self.grid.oclIsNew() */
         this.level++;
         this.changeLowerRightText("Level: "+this.level);
         this.initialize();
+        this.invariant();
     }
 
     /**
@@ -297,6 +315,11 @@ public class Game {
      * @param oldGL old ghost location
      * @param newGL new ghost location
      * @return true if the pacman and the ghost are colliding
+     *
+     * @pre oldPL != null
+     * @pre newPL != null
+     * @pre oldGL != null
+     * @pre newGL != null
      */
     private boolean isColliding(Corridor oldPL, Corridor newPL, Corridor oldGL, Corridor newGL) {
         return (newPL == newGL) || (newPL == oldGL && newGL == oldPL);
@@ -305,6 +328,8 @@ public class Game {
     /**
      * Do all the operations if the pacman and the ghost collided
      * @param ghost the ghost that collided with the pacman
+     *
+     * @pre ghost != null
      */
     private void handleCollision(Ghost ghost) {
         if (!ghost.getIsEaten()) {
@@ -321,6 +346,7 @@ public class Game {
                     g.setLocation(this.grid.getInitLocationGhosts());
             }
         }
+        this.invariant();
     }
 
     /**
@@ -332,7 +358,7 @@ public class Game {
             //Repaint the canvas
             canvas.redraw();
 
-            //Moving the sprites
+            //Move the sprites
             Corridor oldPL = this.pacman.getLocation();
             this.pacman.move();
             Corridor newPL = this.pacman.getLocation();
@@ -360,7 +386,21 @@ public class Game {
 
             //Pause for 4/10th of a second
             canvas.wait(400);
+            this.invariant();
         }
+    }
+
+    /**
+     * Check the class invariant
+     */
+    protected void invariant() {
+        assert lives >= 0 : "Invariant violated: number of lives cannot be negative";
+        assert level > 1 : "Invariant violated: level is strictly positive";
+        assert score >= 0 : "Invariant violated: score cannot be negative";
+        assert bestScore >= 0 : "Invariant violated: score cannot be negative";
+        assert pacman != null : "Invariant violated: pacman cannot be null";
+        assert ghosts != null : "Invariant violated: the list of ghosts cannot be null";
+        assert grid != null : "Invariant violated: the grid cannot be null";
     }
 
 }

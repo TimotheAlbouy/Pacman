@@ -3,6 +3,11 @@ package pacman;
 import pacman.hci.CompoundFigure;
 import pacman.hci.Figure;
 
+/**
+ * A moving element on the canvas that is either a pacman or a ghost.
+ *
+ * @inv location != null
+ */
 public abstract class Sprite extends CompoundFigure {
 
 	private Corridor location;
@@ -11,10 +16,14 @@ public abstract class Sprite extends CompoundFigure {
 	 * Create a new sprite
 	 * @param location the location of the sprite
 	 * @param figures the list of figures making up the sprite
+	 *
+	 * @pre location != null
+	 * @pre figures != null
 	 */
 	public Sprite(Corridor location, Figure[] figures) {
 		super(figures);
 		this.location = location;
+		this.invariant();
 	}
 
 	/**
@@ -28,11 +37,14 @@ public abstract class Sprite extends CompoundFigure {
 	@Override
 	public void move(int dx, int dy) {
 		super.move(dx*Grid.getSquareSide(), dy*Grid.getSquareSide());
+		this.invariant();
 	}
 
 	/**
 	 * Give a new location to the sprite
 	 * @param location the new location
+	 *
+	 * @pre location != null
 	 */
 	public void setLocation(Corridor location) {
 		int oldX = this.location.getX();
@@ -41,6 +53,7 @@ public abstract class Sprite extends CompoundFigure {
 		int newY = location.getY();
 		this.move(newX-oldX, newY-oldY);
 		this.location = location;
+		this.invariant();
 	}
 
 	/**
@@ -65,6 +78,15 @@ public abstract class Sprite extends CompoundFigure {
 	 */
 	public Corridor getLocation() {
 		return this.location;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void invariant() {
+		super.invariant();
+		assert this.location != null : "Invariant violated: location cannot be null";
 	}
 	
 }
