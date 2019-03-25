@@ -50,10 +50,10 @@ public class Game {
     // Instance part
     //-------------------------------------------------------------------------
 
-    private int lives;
-    private int level;
-    private int score;
-    private int bestScore;
+    private int lives = 4;
+    private int level = 1;
+    private int score = 0;
+    private int bestScore = 0;
     private Pacman pacman;
     private Ghost[] ghosts;
     private Grid grid;
@@ -62,6 +62,7 @@ public class Game {
      * Create a new game
      */
     private Game() {
+        //Initialize level
         this.initialize();
     }
 
@@ -160,7 +161,7 @@ public class Game {
 
     /**
      * Get the best score of the player
-     * @return
+     * @return the best score
      */
     public int getBestScore() {
         return this.bestScore;
@@ -193,30 +194,37 @@ public class Game {
     }
 
     /**
-     * Initialize all the attributes of the game
+     * Initialize a level
      */
     private void initialize() {
-        this.lives = 4;
-        this.level = 1;
-        this.score = 0;
-
+        Canvas canvas = Canvas.getCanvas();
+        if (this.grid != null)
+            this.grid.erase();
         this.grid = new Grid();
         this.grid.draw();
 
         //Create the pacman and the ghosts
         Corridor initLocationPacman = this.grid.getInitLocationPacman();
         Corridor initLocationGhosts = this.grid.getInitLocationGhosts();
+        if (this.pacman != null)
+            pacman.erase();
         this.pacman = new Pacman(initLocationPacman);
+        if (this.ghosts != null) {
+            for (Ghost ghost : this.ghosts)
+                ghost.erase();
+        }
         this.ghosts = new Ghost[] {
             new Ghost(initLocationGhosts, Color.MAGENTA),
             new Ghost(initLocationGhosts, Color.PINK),
             new Ghost(initLocationGhosts, Color.GREEN),
             new Ghost(initLocationGhosts, Color.CYAN)
         };
+
         //Initialize display zones
         this.changeLowerLeftText("Score: "+this.score);
         this.changeLowerMiddleText("Lives: "+this.lives);
         this.changeLowerRightText("Level: "+this.level);
+
         //Wait 2 seconds before the beginning
         Canvas.getCanvas().wait(2000);
 		/* post: self.grid.oclIsNew()
@@ -225,7 +233,6 @@ public class Game {
 		  post: self.ghosts->forAll(g | g.oclIsNew())
 		  -- post: Corridor.allInstances().gum->forAll(g | g.oclIsNew())
 		  post: GumType.allInstances()->forAll(gt | gt.oclIsNew()) */
-
     }
 
     /**
@@ -238,7 +245,7 @@ public class Game {
 
     /**
      * Give the current level of the game
-     * @return the level
+     * @return the level of the game
      */
     public int getLevel() {
         return this.level;
@@ -280,16 +287,7 @@ public class Game {
         /* post: self.grid.oclIsNew() */
         this.level++;
         this.changeLowerRightText("Level: "+this.level);
-        for (int i = 0; i < Grid.SIDE_IN_SQUARES; i++) {
-            for (int j = 0; j < Grid.SIDE_IN_SQUARES; j++) {
-                Cell cell = this.grid.getCell(i, j);
-                if (cell instanceof Corridor) {
-                    Corridor corridor = (Corridor)(cell);
-                    // !!!!!!!!!!!!!!!!!!!!
-                    corridor.setGum(new Gum(GumType.SIMPLE));
-                }
-            }
-        }
+        this.initialize();
     }
 
     /**
@@ -363,8 +361,6 @@ public class Game {
             //Pause for 4/10th of a second
             canvas.wait(400);
         }
-        this.changeUpperLeftText("GAME OVER");
-        canvas.redraw();
     }
 
 }
